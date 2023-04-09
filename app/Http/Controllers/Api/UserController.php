@@ -114,9 +114,43 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, $id)
     {
-        //
+        $user = User::find($id);
+        if (is_null($user)) {
+            //user does not exists
+            return response()->json([
+                'status' => 0,
+                'message' => 'User does not exists'
+            ], 400);
+        } else {
+            DB::beginTransaction();
+            try {
+                $user->name = $request['name'];
+                $user->email = $request['email'];
+                $user->contact = $request['contact'];
+                $user->pincode = $request['pincode'];
+                $user->address = $request['address'];
+                $user->save();
+                DB::commit();
+            } catch (\Exception $err) {
+                DB::rollBack();
+                $user = null;
+            }
+
+            if (is_null($user)) {
+                return response()->json([
+                    'status' => 0,
+                    'message' => 'Internal server error',
+                    'error_msg' => $err->getMessage(),
+                ], 500);
+            } else {
+                return response()->json([
+                    'status' => 1,
+                    'message' => 'Data updated successfully'
+                ], 200);
+            }
+        }
     }
 
     /**
