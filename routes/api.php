@@ -28,4 +28,4 @@
     Route::get('users/{id}', [UserController::class, 'show']);
     Route::delete('user/delete/{id}', [UserController::class, 'destroy']);
     Route::put('user/update/{id}', [UserController::class, 'update']);
-    Route::patch('change-password', [UserController::class, 'changePassword']);
+    Route::patch('change-password/{id}', [UserController::class, 'changePassword']);
